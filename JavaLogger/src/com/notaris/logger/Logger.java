@@ -7,21 +7,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-// ---------- USAGE ----------
-// Logger myLogger = new Logger();
-// myLogger.path = "C:\\Users\\username\\Desktop\\test.log";
-// myLogger.console = true;
-// myLogger.info("test 123 info log");
-// myLogger.debug("test 123 debug log");
-// myLogger.error("test 123 error log");
-
 public class Logger {
 
 	public String path = "";
 	public Boolean console = true;
 
 	public void info(String message) {
-		writeToFile(" " + message, 0);
+		writeToFile(message, 0);
 	}
 
 	public void debug(String message) {
@@ -48,29 +40,32 @@ public class Logger {
 		try {
 
 			String[] classInfo = getClassInfo();
+			String log = sdf.format(new Date()) + " [" + classInfo[1] + "] " + mode + " (" + classInfo[0] + ".java:"
+					+ classInfo[2] + ") - " + message;
 
 			File f = new File(path);
 			if (f.exists() && !f.isDirectory()) {
 				BufferedWriter out = new BufferedWriter(new FileWriter(path, true));
-				out.write(sdf.format(new Date()) + " [" + classInfo[1] + "] " + mode + " (" + classInfo[0] + ".java:"
-						+ classInfo[2] + ") - " + message + "\n");
+				out.write(log + "\n");
 				out.close();
 				if (console) {
-					System.out.println(sdf.format(new Date()) + " [" + classInfo[1] + "] " + mode + " (" + classInfo[0]
-							+ ".java:" + classInfo[2] + ") - " + message);
+					System.out.println(log);
 				}
 			} else {
-				FileWriter myWriter = new FileWriter(path);
-				myWriter.write(sdf.format(new Date()) + " [" + classInfo[1] + "] " + mode + " (" + classInfo[0]
-						+ ".java:" + classInfo[2] + ") - " + message + "\n");
-				myWriter.close();
-				if (console) {
-					System.out.println(sdf.format(new Date()) + " [" + classInfo[1] + "] " + mode + " (" + classInfo[0]
-							+ ".java:" + classInfo[2] + ") - " + message);
+				if (!path.equals("")) {
+					FileWriter myWriter = new FileWriter(path);
+					myWriter.write(log + "\n");
+					myWriter.close();
+					if (console) {
+						System.out.println(log);
+					}
+				} else {
+					System.out.println("You must specify a path to write logs!");
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			// e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
 
 	}
@@ -79,8 +74,10 @@ public class Logger {
 		StackTraceElement[] currTrace = Thread.currentThread().getStackTrace();
 		StackTraceElement lineTrace = currTrace[4];
 
-		// Reverse String to find first ocurance of "." take subsstring and reverse back
-		// so you dont get the full package
+		/**
+		 * Reverse String to find first occurrence of "." take substring and reverse
+		 * back so you get the last part of the package i.e. the class name.
+		 */
 		int pos = reverseString(lineTrace.getClassName()).indexOf(".");
 		String className = reverseString(reverseString(lineTrace.getClassName()).substring(0, pos));
 
