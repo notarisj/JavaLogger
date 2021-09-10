@@ -23,14 +23,18 @@ public class Logger {
 	public void error(String message) {
 		writeToFile(message, 2);
 	}
+	
+	public void errorException(Exception e) {
+		writeToFile(e.getClass().toString().replace("class ", "") + ": " + e.getMessage(), 2);
+	}
 
 	private void writeToFile(String message, int type) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
 		String mode = "";
 		if (type == 0) {
-			mode = "INFO";
+			mode = "INFO ";
 		} else if (type == 1) {
 			mode = "DEBUG";
 		} else if (type == 2) {
@@ -40,7 +44,7 @@ public class Logger {
 		try {
 
 			String[] classInfo = getClassInfo();
-			String log = sdf.format(new Date()) + " [" + classInfo[1] + "] " + mode + " (" + classInfo[0] + ".java:"
+			String log = sdf.format(new Date()) + " " + mode + " [" + classInfo[1] + "] " + "(" + classInfo[0] + ".java:"
 					+ classInfo[2] + ") - " + message;
 
 			File f = new File(path);
