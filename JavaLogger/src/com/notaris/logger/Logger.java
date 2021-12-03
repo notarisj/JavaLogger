@@ -43,7 +43,7 @@ public class Logger {
 
 		try {
 
-			String[] classInfo = getClassInfo();
+			String[] classInfo = Utils.getClassInfo();
 			String log = sdf.format(new Date()) + " " + mode + " [" + classInfo[1] + "] " + "(" + classInfo[0] + ".java:"
 					+ classInfo[2] + ") - " + message;
 
@@ -72,29 +72,6 @@ public class Logger {
 			System.out.println(e.getMessage());
 		}
 
-	}
-
-	private String[] getClassInfo() {
-		StackTraceElement[] currTrace = Thread.currentThread().getStackTrace();
-		StackTraceElement lineTrace = currTrace[4];
-
-		/**
-		 * Reverse String to find first occurrence of "." take substring and reverse
-		 * back so you get the last part of the package i.e. the class name.
-		 */
-		int pos = reverseString(lineTrace.getClassName()).indexOf(".");
-		String className = reverseString(reverseString(lineTrace.getClassName()).substring(0, pos));
-
-		String methodName = lineTrace.getMethodName();
-		int lineNumber = lineTrace.getLineNumber();
-		String[] values = { className, methodName, Integer.toString(lineNumber) };
-		return values;
-	}
-
-	private static String reverseString(String str) {
-		StringBuilder sb = new StringBuilder(str);
-		sb.reverse();
-		return sb.toString();
 	}
 
 }
